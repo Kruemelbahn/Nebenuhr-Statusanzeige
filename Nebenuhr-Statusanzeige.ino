@@ -64,7 +64,7 @@ discrete In/Outs used for functionalities:
 
 #define LCD     // used in GlobalOutPrint.ino
 
-const uint16_t NUMPIXELS(4);
+const uint16_t NUMPIXELS(6);
 
 #include "CV.h"
 
