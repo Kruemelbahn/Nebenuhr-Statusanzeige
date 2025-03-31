@@ -225,6 +225,49 @@ void OutTextClockStatus()
 	}
 }
 
+void OutTextDisplayStatus()
+{
+  lcd.setCursor(0, 1);  // set the cursor to column x, line y
+
+  uint8_t ui8_Hour(0);
+  uint8_t ui8_Minute(0);
+  const boolean bIsFastClockStarted(GetFastClock(&ui8_Hour, &ui8_Minute));  // set if at least one telegramm received
+  const boolean bIsRunning(isFastClockRunning()); // set if clockrate is not zero
+  const uint8_t ui8Rate(GetClockRate());
+  const boolean bRed(!bIsRunning);
+  const boolean bGreen(bIsRunning && (ui8Rate > 1));
+  const boolean bBlue(bIsRunning && (ui8Rate == 1));
+
+  if(bRed)
+		lcd.print(F("R"));
+  else
+		lcd.print(F("-"));
+  if(bGreen)
+		lcd.print(F("G"));
+  else
+		lcd.print(F("-"));
+  if(bBlue)
+		lcd.print(F("B"));
+  else
+		lcd.print(F("-"));
+
+  lcd.setCursor(4, 1);  // set the cursor to column x, line y
+  if(bIsRunning)
+		lcd.print(F("Run"));
+  else
+		lcd.print(F("Stp"));
+
+  lcd.setCursor(8, 1);  // set the cursor to column x, line y
+  if(bIsFastClockStarted)
+		lcd.print(F("T"));
+  else
+		lcd.print(F("-"));
+
+  lcd.setCursor(10, 1);  // set the cursor to column x, line y
+	lcd.print(F("1:"));
+  decout(lcd, ui8Rate, 2);
+}
+
 void DisplayCV(uint16_t ui16_Value)
 {
   lcd.noCursor();
@@ -385,7 +428,30 @@ void HandleLCDPanel()
         SetLCDPanelModeStatus();  // mode = 1
         return;
       }
+      if (ui8_buttons & BUTTON_RIGHT)
+      { // switch to display current clock state
+				lcd.clear();
+				lcd.setCursor(0, 0);  // set the cursor to column x, line y
+				lcd.print(F("Display-Status"));
+        OutTextDisplayStatus();
+        ui8_LCDPanelMode = 11;
+        return;
+      }
     } // if(ui8_LCDPanelMode == 10)
+    //------------------------------------
+    if(ui8_LCDPanelMode == 11)
+    {
+      // actual ui8_LCDPanelMode = view current clock state
+      if (ui8_buttons & BUTTON_LEFT)
+      { // switch to display current clock state
+				lcd.clear();
+				lcd.setCursor(0, 0);  // set the cursor to column x, line y
+				lcd.print(F("Status"));
+        OutTextClockStatus();
+        ui8_LCDPanelMode = 10;
+        return;
+      }
+    } // if(ui8_LCDPanelMode == 11)
     //------------------------------------
     if ((ui8_LCDPanelMode >= 20) && (ui8_LCDPanelMode <= MAX_MODE))
     {
@@ -558,7 +624,7 @@ void HandleLCDPanel()
     {
       // actual ui8_LCDPanelMode = "I²C-Scan"
       if (ui8_buttons & BUTTON_LEFT)
-      { // switch to "IÂ²C-Scan?"
+      { // switch to "I²C-Scan?"
         SetLCDPanelModeScan();
         return;
       }
@@ -617,8 +683,9 @@ void HandleLCDPanel()
   } // if(ui8_LCDPanelMode == 7) 
   //========================================================================
   if(ui8_LCDPanelMode == 10)
-  {
 		OutTextClockStatus();
-	}
+  //========================================================================
+  if(ui8_LCDPanelMode == 11)
+		OutTextDisplayStatus();
   //========================================================================
 }

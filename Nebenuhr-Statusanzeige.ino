@@ -64,7 +64,7 @@ discrete In/Outs used for functionalities:
 
 #define LCD     // used in GlobalOutPrint.ino
 
-const uint16_t NUMPIXELS(16);
+const uint16_t NUMPIXELS(4);
 
 #include "CV.h"
 
@@ -137,7 +137,9 @@ void loop()
 }
 
 /*=== will be called from LocoNetFastClockClass
-			if telegram is OPC_SL_RD_DATA [0xE7] or OPC_WR_SL_DATA [0xEF] and clk-state != IDLE ==================*/
+			if telegram is OPC_SL_RD_DATA [0xE7] or OPC_WR_SL_DATA [0xEF] and clk-state != IDLE ==================
+  Rate: 0 = Freeze clock, 1 = normal, 10 = 10:1 etc. Max is 0x7F 
+*/
 void notifyFastClock( uint8_t Rate, uint8_t Day, uint8_t Hour, uint8_t Minute, uint8_t Sync )
 {
 #if defined DEBUG

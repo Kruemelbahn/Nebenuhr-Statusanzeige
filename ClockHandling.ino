@@ -25,11 +25,7 @@ const uint8_t SEG_DASH[]({SEG_G, SEG_G, SEG_G, SEG_G}); // set all 4 digits to '
 //=== Functions =======================================
 void InitClockHandling()
 {
-/* following is done with analogWrite(...)
-  pinMode(RGB_R, OUTPUT);
-  pinMode(RGB_G, OUTPUT);
-  pinMode(RGB_B, OUTPUT);
-*/
+/* pinMode for RGB-Outputs are set with analogWrite(...) */
   pixels.begin();
 }
 
@@ -47,12 +43,12 @@ void HandleClockHandling()
   analogWrite(RGB_R, ui16RBright);  // special handling for value 0 or 255 is done inside analogWrite(...) 
 
   // fastclock running in fastclock-mode (quicker than realtime)
-  const boolean bGreen(bIsRunning && (ui8Rate > 10));
+  const boolean bGreen(bIsRunning && (ui8Rate > 1));
   const uint16_t ui16GBright(GetCV(ID_G_BRIGHT));
   analogWrite(RGB_G, ui16GBright);  // special handling for value 0 or 255 is done inside analogWrite(...)
 
   // fastclock running in realtime (or slower)
-  const boolean bBlue(bIsRunning && ui8Rate && (ui8Rate <= 10));
+  const boolean bBlue(bIsRunning && (ui8Rate == 1));
   const uint16_t ui16BBright(GetCV(ID_B_BRIGHT));
   analogWrite(RGB_B, ui16BBright);  // special handling for value 0 or 255 is done inside analogWrite(...)  
 

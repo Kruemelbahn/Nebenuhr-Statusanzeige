@@ -41,7 +41,7 @@ const struct _CV_DEF cvDefinition[MAX_CV] =
 { // ID               default value       minValue			        maxValue            type              r/o
    { ID_DEVICE,       DEVICE_ID,          1,						        126,                CV_TYPE::UI8,     false}  // normally r/o
   ,{ ID_LEDCOUNT,     NUMPIXELS,          1,						        255,                CV_TYPE::UI8,     true}   // count of WS2812B TODO: currently not changeable using this CV
-  ,{ ID_LED_BRIGHT,   255,                0,						        0,                  CV_TYPE::UI8,     false}  // Brightness for WS2812B
+  ,{ ID_LED_BRIGHT,   255,                0,						        255,                CV_TYPE::UI8,     false}  // Brightness for WS2812B
   ,{ ID_R_BRIGHT,     255,                0,						        255,                CV_TYPE::UI8,     false}  // Brightness for RED
   ,{ ID_G_BRIGHT,     255,                0,						        255,                CV_TYPE::UI8,     false}  // Brightness for GREEN
   ,{ ID_B_BRIGHT,     255,                0,						        255,                CV_TYPE::UI8,     false}  // Brightness for BLUE
