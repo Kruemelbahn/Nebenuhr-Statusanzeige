@@ -41,7 +41,6 @@ uint8_t GetClockPhase() { return ui8_FCOut; }
 
 boolean isFastClockRunning() { return b_FastClockIsRunning; }
 
-/*   Rate: 0 = Freeze clock, 1 = normal, 10 = 10:1 etc. Max is 0x7F */
 uint8_t GetClockRate() { return ui8_FCRate; }
 
 unsigned long ul_LastSetFastClock = 0;

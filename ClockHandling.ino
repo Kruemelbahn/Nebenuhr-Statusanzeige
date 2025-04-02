@@ -1,26 +1,26 @@
 //=== ClockHandling for Nebenuhr-Statusanzeige ===
 //=== declaration of out's =======================================
-const uint8_t RGB_R(9);
-const uint8_t RGB_G(11);
-const uint8_t RGB_B(3);
+constexpr uint8_t RGB_R(9);
+constexpr uint8_t RGB_G(11);
+constexpr uint8_t RGB_B(3);
 
-const int16_t PIXEL_PIN(10);
+constexpr int16_t PIXEL_PIN(10);
 
-const uint8_t TM1637CLK(4);
-const uint8_t TM1637DIO(5);
+constexpr uint8_t TM1637CLK(4);
+constexpr uint8_t TM1637DIO(5);
 
 //................................................
 #include <Adafruit_NeoPixel.h>
-Adafruit_NeoPixel pixels(Adafruit_NeoPixel(NUMPIXELS, PIXEL_PIN, NEO_GRB + NEO_KHZ800));
+Adafruit_NeoPixel pixels(NUMPIXELS, PIXEL_PIN, NEO_GRB + NEO_KHZ800);
 
 //................................................
 #include <TM1637Display.h>
 TM1637Display display(TM1637CLK, TM1637DIO);
 
 // For displays with just a colon: 00:00 (0b01000000)
-const uint8_t ui8_Colon(0b01000000);
+constexpr uint8_t ui8_Colon(0b01000000);
 
-const uint8_t SEG_DASH[]({SEG_G, SEG_G, SEG_G, SEG_G}); // set all 4 digits to '-'
+constexpr uint8_t SEG_DASH[]({SEG_G, SEG_G, SEG_G, SEG_G}); // set all 4 digits to '-'
 
 //=== Functions =======================================
 void InitClockHandling()
@@ -82,7 +82,7 @@ void HandleClockHandling()
 
     display.setBrightness(0x0F);
     if(bIsFastClockStarted)
-      display.showNumberDecEx(ui16_Time, ui8_Colon);
+      display.showNumberDecEx(ui16_Time, !isFastClockRunning() || Blinken2Hz() ? ui8_Colon : 0);
     else
       display.setSegments(SEG_DASH);
   }

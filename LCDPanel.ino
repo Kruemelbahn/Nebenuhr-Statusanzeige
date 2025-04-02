@@ -14,6 +14,7 @@ uint8_t ui8_LCDPresent = 0;  // ui8_LCDPresent: 1 if I2C-LCD-Panel is found
   7   "FastClock" is displayed
  
  10   view current FastClock state
+ 11   view current FastClock display state
 
  20   (edit) mode for CV1
  21   (edit) mode for CV2
@@ -214,7 +215,7 @@ void OutTextClockStatus()
 		decout(lcd, ui16_iCount, 4);
 		lcd.print(F("-"));
     lcd.print(F("1:"));
-    decout(lcd, ui8_Rate, 2);
+    decout(lcd, ui8_Rate, 2); // Rate: 0 = Freeze clock, 1 = normal, 10 = 10:1 etc. max is 0x7F
 		lcd.print('-');
 		lcd.print(ui8_Sync? '1' : '0');
 		lcd.print('-');
@@ -265,7 +266,7 @@ void OutTextDisplayStatus()
 
   lcd.setCursor(10, 1);  // set the cursor to column x, line y
 	lcd.print(F("1:"));
-  decout(lcd, ui8Rate, 2);
+  decout(lcd, ui8Rate, 2);  // Rate: 0 = Freeze clock, 1 = normal, 10 = 10:1 etc. max is 0x7F
 }
 
 void DisplayCV(uint16_t ui16_Value)

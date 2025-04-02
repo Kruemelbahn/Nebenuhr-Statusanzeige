@@ -10,7 +10,7 @@ enum { ID_DEVICE = 0, ID_LEDCOUNT, ID_LED_BRIGHT, ID_R_BRIGHT, ID_G_BRIGHT, ID_B
 //=== declaration of var's =======================================
 #define PRODUCT_ID SOFTWARE_ID
 static const uint8_t DEVICE_ID = 1;							// CV1: Device-ID
-static const uint8_t SW_VERSION = 1;						// CV7: Software-Version
+static const uint8_t SW_VERSION = 2;						// CV7: Software-Version
 static const uint8_t SLAVE_CLOCK_STATUS = 18;		// CV8: Software-ID
 
 #if defined ETHERNET_BOARD
