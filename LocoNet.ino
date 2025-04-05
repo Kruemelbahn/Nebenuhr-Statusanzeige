@@ -167,7 +167,7 @@ void HandleLocoNetMessages()
   } // if(LnPacket)
 
 	if (ENABLE_LN_FC_MODUL/* we are also Slave */ && isTimeForProcessActions(&ul_LastFastClockTick, 67))
-    FastClock.process66msActions(); // will call 'notifyFastClock' with sync=0 if neccessary 
+    FastClock.process66msActions(); // will call 'notifyFastClockFracMins' with sync=0 if neccessary (and so clock will continue running internally)
 }  
 
 void HandleFracMins(uint16_t FracMins)
@@ -183,13 +183,14 @@ void HandleFracMins(uint16_t FracMins)
   }
 }
 
-void PollFastClock()
+LN_STATUS PollFastClock()
 {
-	// Poll the Current Time from the Command Station
-	FastClock.poll();
+  // Poll the current time from the command station
+  // ...we don't use "FastClock.poll();" because it has no return (so we don't see any error and can't react to the result)...
 #if defined DEBUG
-  Serial.println("...poll...");
+  Serial.println("...poll FastClock...");
 #endif
+  return LocoNet.send(OPC_RQ_SL_DATA, FC_SLOT, 0);
 }
 
 #if defined DEBUG || defined TELEGRAM_FROM_SERIAL

@@ -267,6 +267,12 @@ void OutTextDisplayStatus()
   lcd.setCursor(10, 1);  // set the cursor to column x, line y
 	lcd.print(F("1:"));
   decout(lcd, ui8Rate, 2);  // Rate: 0 = Freeze clock, 1 = normal, 10 = 10:1 etc. max is 0x7F
+
+  lcd.setCursor(15, 1);  // set the cursor to column x, line y
+  if(IsLnOk())
+		lcd.print(F("+"));
+  else
+		lcd.print(F("-"));
 }
 
 void DisplayCV(uint16_t ui16_Value)

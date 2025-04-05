@@ -5,6 +5,11 @@ This unit display the state of the connected-fastclock:
 - blue = fastclock running in realtime-mode (clockrate 1:1)<br>
 - green = fastclock running in fastclock-mode (= quicker than realtime)<br>
 - red = fastclock stopped (not running)<br>
+
+This device can also used<br>
+- as a Fastclock-slave, showing the time using a TM1637-display<br>
+- as a LocoNet-Watcher, indication whether the connected Loconet is on or off (or disturbed)<br>
+
 For more details please refer to the [manual](Documentation/Nebenuhr-Statusanzeige.pdf)<br>
 
 ### Basic Idea

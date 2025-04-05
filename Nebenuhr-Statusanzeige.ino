@@ -17,7 +17,7 @@ discrete In/Outs used for functionalities:
   -  9 Out used   RED
   - 10 Out used   WS2812B Dataline
   - 11 Out used   GREEN
-  - 12 not used
+  - 12 In  used   LN-Watcher
   - 13 not used
   - 14 not used
   - 15 not used
@@ -56,7 +56,7 @@ discrete In/Outs used for functionalities:
 //#define DEBUG_CV 1  // enables CV-Output to serial port during program start (saves 180Bytes of code :-)
 //#define DEBUG_MEM 1 // enables memory status on serial port (saves 350Bytes of code :-)
 
-//#define FAST_CLOCK_LOCAL 1  //use local ports 2 and 3 as slaveclockmodule as an alternative/additional for local I2C-Module
+//#define FAST_CLOCK_LOCAL 1  //uses local ports 2 and 3 as slaveclockmodule as an alternative/additional for local I2C-Module
                               // not usable with this hardware, ports already used for LED-Stripe
 
 //#define TELEGRAM_FROM_SERIAL 1  // enables receiving telegrams from SerialMonitor
