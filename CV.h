@@ -1,7 +1,7 @@
 //=== CV-Definitions for Nebenuhr-Statusanzeige ===
 
 // give CV a unique name
-enum { ID_DEVICE = 0, ID_LEDCOUNT, ID_LED_BRIGHT, ID_R_BRIGHT, ID_G_BRIGHT, ID_B_BRIGHT, VERSION_NUMBER, SOFTWARE_ID, ADD_FUNCTIONS_1, ADD_FUNCTIONS_2
+enum { ID_DEVICE = 0, ID_LED_COUNT, ID_LED_BRIGHT, ID_R_BRIGHT, ID_G_BRIGHT, ID_B_BRIGHT, VERSION_NUMBER, SOFTWARE_ID, ADD_FUNCTIONS_1, ADD_FUNCTIONS_2
 #if defined ETHERNET_BOARD
      , IP_BLOCK_3, IP_BLOCK_4
 #endif
@@ -10,7 +10,7 @@ enum { ID_DEVICE = 0, ID_LEDCOUNT, ID_LED_BRIGHT, ID_R_BRIGHT, ID_G_BRIGHT, ID_B
 //=== declaration of var's =======================================
 #define PRODUCT_ID SOFTWARE_ID
 static const uint8_t DEVICE_ID = 1;							// CV1: Device-ID
-static const uint8_t SW_VERSION = 3;						// CV7: Software-Version
+static const uint8_t SW_VERSION = 4;						// CV7: Software-Version
 static const uint8_t SLAVE_CLOCK_STATUS = 18;		// CV8: Software-ID
 
 #if defined ETHERNET_BOARD
@@ -40,7 +40,7 @@ enum CV_TYPE { UI8 = 0, UI16 = 1, BINARY = 2 };
 const struct _CV_DEF cvDefinition[MAX_CV] =
 { // ID               default value       minValue			        maxValue            type              r/o
    { ID_DEVICE,       DEVICE_ID,          1,						        126,                CV_TYPE::UI8,     false}  // normally r/o
-  ,{ ID_LEDCOUNT,     NUMPIXELS,          1,						        255,                CV_TYPE::UI8,     false}  // count of WS2812B
+  ,{ ID_LED_COUNT,    NUMPIXELS,          1,						        255,                CV_TYPE::UI8,     false}  // count of WS2812B
   ,{ ID_LED_BRIGHT,   255,                0,						        255,                CV_TYPE::UI8,     false}  // Brightness for WS2812B
   ,{ ID_R_BRIGHT,     255,                0,						        255,                CV_TYPE::UI8,     false}  // Brightness for RED
   ,{ ID_G_BRIGHT,     255,                0,						        255,                CV_TYPE::UI8,     false}  // Brightness for GREEN
@@ -62,7 +62,7 @@ const __FlashStringHelper *GetCVName(uint8_t ui8_Index)
 { 
   // each string should have max. 10 chars
   const __FlashStringHelper *cvName[MAX_CV] = { F("DeviceID"),
-                                                F("LED-CNT"),
+                                                F("WS-Count"),
                                                 F("WS-Bright"),
                                                 F("R-Bright"),
                                                 F("G-Bright"),
