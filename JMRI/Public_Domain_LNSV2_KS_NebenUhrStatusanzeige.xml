@@ -15,7 +15,7 @@
   <version author="Michael Zimmermann" version="4" lastUpdated="20231027"/>
   <decoder>
     <family name="KS" mfg="Public-domain and DIY">
-      <model model="Nebenuhr using LNSV2" productID="12" developerID="58" />
+      <model model="Nebenuhr-Statusdisplay using LNSV2" productID="18" developerID="58" />
     </family>
     <programming direct="no" paged="no" register="no" ops="no">
         <mode>LOCONETSV2MODE</mode>
@@ -48,54 +48,65 @@
       <variable CV="8" item="CV8:ProductID" readOnly="yes" comment="Product ID">
         <decVal />
         <label>Product ID</label>
-		<label xml:lang="de">Kennung: Nebenuhr</label>
-		<tooltip>Nebenuhr = 12</tooltip>
+		<label xml:lang="de">Kennung: Nebenuhr-Statusanzeige</label>
+		<tooltip>Nebenuhr-Statusanzeige = 19</tooltip>
       </variable>
 
-	  <variable CV="2" item="Advanced Group 1 Option 1" readOnly="no" comment="Operating mode">
-		<enumVal>
-			<enumChoice value="0">
-				<choice>Fastclock-Slave</choice>
-			</enumChoice>
-			<enumChoice value="1">
-				<choice>mit Uhrendecoder nach O.Spannekrebs</choice>
-			</enumChoice>
-			<enumChoice value="2">
-				<choice>ohne Decoder mit direkter Taktansteuerung</choice>
-			</enumChoice>
-		</enumVal>
-		<label>Operation mode</label>
-		<label xml:lang="de">Betriebsart</label>
+	  <variable CV="2" item="Advanced Group 1 Option 1" readOnly="no" comment="Count of WS2812B">
+        <decVal min="1" max="255"/>
+        <label>Count of WS2812B</label>
+		<label xml:lang="de">Anzahl der angeschlossenen LED WS2812B</label>
 		<tooltip>&lt;html&gt;
-				 Betriebsart, Standard = ohne Decoder mit direkter Taktansteuerung&lt;br/&gt;
-				 Wird bei Erst-IBN eingestellt und sollte danach nicht mehr geaendert werden
+				 Anzahl der angeschlossenen LED WS2812B, 1...255, Standard = 16 
 				 &lt;/html&gt;
 		</tooltip>
 	  </variable>
 
-	  <variable CV="9" item="Advanced Group 1 Option 2" readOnly="no" mask="XXVXXXXX">
-		<enumVal>
-			<enumChoice value="0">
-				<choice>FastClock normal phase</choice>
-				<choice xml:lang="de">normale Phasenlage</choice>
-			</enumChoice>
-			<enumChoice value="1">
-				<choice>FastClock invert phase</choice>
-				<choice xml:lang="de">Phasenlage invertieren</choice>
-			</enumChoice>
-		</enumVal>
-		<label>Type of phase</label>
-		<label xml:lang="de">Phasenlage</label>
+	  <variable CV="3" item="Advanced Group 1 Option 2" readOnly="no" comment="Brightness for WS2812B">
+        <decVal min="0" max="255"/>
+        <label>Brightness for WS2812B</label>
+		<label xml:lang="de">Helligkeit für die WS2812B</label>
 		<tooltip>&lt;html&gt;
-				 CV9, Bit5 (Standard=normale Phasenlage)&lt;br/&gt;
-				 wird auch bei direkter Uhrentaktausgabe verwendet (CV2=2)
-				 nach einer Aenderung ist ein Neustart erforderlich!&lt;br/&gt;
-				 Wird bei Erst-IBN eingestellt und sollte danach nicht mehr geaendert werden
+				 Helligkeit für die WS2812B, 0...255, Standard = 255&lt;br/&gt;
+				 Beim Wert 0 sind die WS2812B aus.
 				 &lt;/html&gt;
 		</tooltip>
 	  </variable>
 
-	  <variable CV="9" item="Advanced Group 1 Option 3" readOnly="no" mask="XXXXVXXX">
+	  <variable CV="4" item="Advanced Group 1 Option 3" readOnly="no" comment="Brightness for LED-Stripe Red">
+        <decVal min="0" max="255"/>
+        <label>Brightness for LED-Stripe Red</label>
+		<label xml:lang="de">Helligkeit für das LED-Band, Farbe rot</label>
+		<tooltip>&lt;html&gt;
+				 Helligkeit für das LED-Band, Farbe rot, 0...255, Standard = 255&lt;br/&gt;
+				 Beim Wert 0 ist die LED aus.
+				 &lt;/html&gt;
+		</tooltip>
+	  </variable>
+
+	  <variable CV="5" item="Advanced Group 1 Option 4" readOnly="no" comment="Brightness for LED-Stripe Green">
+        <decVal min="0" max="255"/>
+        <label>Brightness for LED-Stripe Green</label>
+		<label xml:lang="de">Helligkeit für das LED-Band, Farbe gruen</label>
+		<tooltip>&lt;html&gt;
+				 Helligkeit für das LED-Band, Farbe gruen, 0...255, Standard = 255&lt;br/&gt;
+				 Beim Wert 0 ist die LED aus.
+				 &lt;/html&gt;
+		</tooltip>
+	  </variable>
+
+	  <variable CV="6" item="Advanced Group 1 Option 5" readOnly="no" comment="Brightness for LED-Stripe Blue">
+        <decVal min="0" max="255"/>
+        <label>Brightness for LED-Stripe Blue</label>
+		<label xml:lang="de">Helligkeit für das LED-Band, Farbe blau</label>
+		<tooltip>&lt;html&gt;
+				 Helligkeit für das LED-Band, Farbe blau, 0...255, Standard = 255&lt;br/&gt;
+				 Beim Wert 0 ist die LED aus.
+				 &lt;/html&gt;
+		</tooltip>
+	  </variable>
+
+	  <variable CV="9" item="Advanced Group 1 Option 6" readOnly="no" mask="XXXXVXXX">
 		<enumVal>
 			<enumChoice value="0">
 				<choice>FastClock running only with telegrams</choice>
@@ -116,7 +127,7 @@
 		</tooltip>
 	  </variable>
 
-	  <variable CV="9" item="Advanced Group 1 Option 4" readOnly="no" mask="XXXVXXXX">
+	  <variable CV="9" item="Advanced Group 1 Option 7" readOnly="no" mask="XXXVXXXX">
 		<enumVal>
 			<enumChoice value="0">
 				<choice>disable support for JMRI</choice>
@@ -137,7 +148,7 @@
 		</tooltip>
 	  </variable>
 
-	  <variable CV="9" item="Advanced Group 1 Option 5" readOnly="no" mask="XXXXXVXX">
+	  <variable CV="9" item="Advanced Group 1 Option 8" readOnly="no" mask="XXXXXVXX">
 		<enumVal>
 			<enumChoice value="0">
 				<choice>no</choice>
@@ -154,6 +165,63 @@
 				 CV9, Bit2 (Standard=FastClock-Telegramme nicht auswerten)&lt;br/&gt;
 				 nach einer Aenderung ist ein Neustart erforderlich!&lt;br/&gt;
 				 Wird bei Erst-IBN eingestellt und sollte danach nicht mehr geaendert werden
+				 &lt;/html&gt;
+		</tooltip>
+	  </variable>
+
+	  <variable CV="10" item="Advanced Group 1 Option 9" readOnly="no" mask="XXXXXXXV">
+		<enumVal>
+			<enumChoice value="0">
+				<choice>WS2812B: use color blue</choice>
+				<choice xml:lang="de">WS2812B: Farbe blau wird verwendet</choice>
+			</enumChoice>
+			<enumChoice value="1">
+				<choice>WS2812B: use color white</choice>
+				<choice xml:lang="de">WS2812B: Farbe weiß wird verwendet</choice>
+			</enumChoice>
+		</enumVal>
+		<label>WS2812BRealtimeColor</label>
+		<label xml:lang="de">WS2812B: Farbe für Realtimeanzeige</label>
+		<tooltip>&lt;html&gt;
+				 CV10, Bit0 (Standard=Farbe blau)
+				 &lt;/html&gt;
+		</tooltip>
+	  </variable>
+
+	  <variable CV="10" item="Advanced Group 1 Option 10" readOnly="no" mask="XXXXXXVX">
+		<enumVal>
+			<enumChoice value="0">
+				<choice>no display TM1637 connected</choice>
+				<choice xml:lang="de">keine TM1637-Anzeige angeschlossen</choice>
+			</enumChoice>
+			<enumChoice value="1">
+				<choice>display TM1637 connected</choice>
+				<choice xml:lang="de">TM1637-Anzeige angeschlossen</choice>
+			</enumChoice>
+		</enumVal>
+		<label>TM1637Connection</label>
+		<label xml:lang="de">Anschluss eines TM1637 zur Zeitanzeige</label>
+		<tooltip>&lt;html&gt;
+				 CV10, Bit1 (Standard=kein TM1637 angeschlossen)
+				 &lt;/html&gt;
+		</tooltip>
+	  </variable>
+
+	  <variable CV="10" item="Advanced Group 1 Option 11" readOnly="no" mask="VXXXXXXX">
+		<enumVal>
+			<enumChoice value="0">
+				<choice>no loconet level monitoring</choice>
+				<choice xml:lang="de">keine LocoNET®-Überwachung</choice>
+			</enumChoice>
+			<enumChoice value="1">
+				<choice>loconet level monitoring</choice>
+				<choice xml:lang="de">LocoNET®-Überwachung</choice>
+			</enumChoice>
+		</enumVal>
+		<label>LocoNetMonitor</label>
+		<label xml:lang="de">LocoNET®-Überwachung</label>
+		<tooltip>&lt;html&gt;
+				 CV10, Bit7 (Standard=keine LocoNET®-Überwachung)
 				 &lt;/html&gt;
 		</tooltip>
 	  </variable>
