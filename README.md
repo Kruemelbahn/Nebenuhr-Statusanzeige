@@ -13,7 +13,7 @@ This device can also used<br>
 For more details please refer to the [manual](Documentation/Nebenuhr-Statusanzeige.pdf)<br>
 
 ### Basic Idea
-The basic idea for developing Nebenuhr-Statusanzeige was taken from FREMO-magazine HP1 Modellbahn issue 1/2005 page 14 "Philipp Masmeier - Läuft sie oder läuft sie nicht?"
+The basic idea for developing Nebenuhr-Statusanzeige was taken from [FREMO-magazine HP1 Modellbahn issue 1/2025 page 14 "Philipp Masmeier - Läuft sie oder läuft sie nicht?"](https://www.fremo-net.eu/fileadmin/hp1_archiv/Hp1_25_1_col_web.pdf)
 
 ### Requested libraries
 Nebenuhr-Statusanzeige requires my libraries listed below in addition to various Arduino standard libraries:<br> 
