@@ -49,7 +49,7 @@
         <decVal />
         <label>Product ID</label>
 		<label xml:lang="de">Kennung: Nebenuhr-Statusanzeige</label>
-		<tooltip>Nebenuhr-Statusanzeige = 19</tooltip>
+		<tooltip>Nebenuhr-Statusanzeige = 18</tooltip>
       </variable>
 
 	  <variable CV="2" item="Advanced Group 1 Option 1" readOnly="no" comment="Count of WS2812B">
@@ -148,28 +148,7 @@
 		</tooltip>
 	  </variable>
 
-	  <variable CV="9" item="Advanced Group 1 Option 8" readOnly="no" mask="XXXXXVXX">
-		<enumVal>
-			<enumChoice value="0">
-				<choice>no</choice>
-				<choice xml:lang="de">nicht auswerten</choice>
-			</enumChoice>
-			<enumChoice value="1">
-				<choice>yes</choice>
-				<choice xml:lang="de">auswerten</choice>
-			</enumChoice>
-		</enumVal>
-		<label>FastClock operationmode</label>
-		<label xml:lang="de">FastClock-Telegramme</label>
-		<tooltip>&lt;html&gt;
-				 CV9, Bit2 (Standard=FastClock-Telegramme nicht auswerten)&lt;br/&gt;
-				 nach einer Aenderung ist ein Neustart erforderlich!&lt;br/&gt;
-				 Wird bei Erst-IBN eingestellt und sollte danach nicht mehr geaendert werden
-				 &lt;/html&gt;
-		</tooltip>
-	  </variable>
-
-	  <variable CV="10" item="Advanced Group 1 Option 9" readOnly="no" mask="XXXXXXXV">
+	  <variable CV="10" item="Advanced Group 1 Option 8" readOnly="no" mask="XXXXXXXV">
 		<enumVal>
 			<enumChoice value="0">
 				<choice>WS2812B: use color blue</choice>
@@ -188,7 +167,7 @@
 		</tooltip>
 	  </variable>
 
-	  <variable CV="10" item="Advanced Group 1 Option 10" readOnly="no" mask="XXXXXXVX">
+	  <variable CV="10" item="Advanced Group 1 Option 9" readOnly="no" mask="XXXXXXVX">
 		<enumVal>
 			<enumChoice value="0">
 				<choice>no display TM1637 connected</choice>
@@ -203,6 +182,25 @@
 		<label xml:lang="de">Anschluss eines TM1637 zur Zeitanzeige</label>
 		<tooltip>&lt;html&gt;
 				 CV10, Bit1 (Standard=kein TM1637 angeschlossen)
+				 &lt;/html&gt;
+		</tooltip>
+	  </variable>
+
+	  <variable CV="10" item="Advanced Group 1 Option 10" readOnly="no" mask="XXXXXVXX">
+		<enumVal>
+			<enumChoice value="0">
+				<choice>no diagnostic-leds connected</choice>
+				<choice xml:lang="de">keine Diagnose-LEDs vorhanden</choice>
+			</enumChoice>
+			<enumChoice value="1">
+				<choice>diagnostic-leds connected</choice>
+				<choice xml:lang="de">Diagnose-LEDs vorhanden</choice>
+			</enumChoice>
+		</enumVal>
+		<label>Diagnostic-LEDs</label>
+		<label xml:lang="de">Diagnose-LEDs</label>
+		<tooltip>&lt;html&gt;
+				 CV10, Bit2 (Standard=Diagnose-LEDs vorhanden)
 				 &lt;/html&gt;
 		</tooltip>
 	  </variable>

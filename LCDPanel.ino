@@ -25,8 +25,18 @@ uint8_t ui8_LCDPresent = 0;  // ui8_LCDPresent: 1 if I2C-LCD-Panel is found
  26   (edit) mode for CV7
  27   (edit) mode for CV8
  28   (edit) mode for CV9
+ 29   (edit) mode for CV10
+ 30   (edit) mode for CV11
+ 31   (edit) mode for CV12
  
+ 50   Test: Farbe rot
+ 51   Test: Farbe grün
+ 52   Test: Farbe blau
+ 53   Test: Farbe weiß
+ 54   Test: Farbe gelb
+
 200   confirm display CV's
+205   confirm display Farbentest
 210   confirm display I2C-Scan
 211   I2C-Scan
 
@@ -46,8 +56,19 @@ boolean b_IBN = false;
 
 uint8_t ui8_CursorX = 0;
 
+//----------------------------------------------------------------
+uint16_t ui16_previCount = 0;
+uint8_t ui8_prevRate = 0;
+uint8_t ui8_prevSync = 0;
+uint8_t ui8_prevFCHour = 0;
+uint8_t ui8_prevFCMinute = 0;
+boolean b_prevGetClockState = false;
+boolean b_prevIsFastClockStarted = false;
+boolean b_prevIsRunning = false;
+boolean b_prevLnOk = false;
 //=== functions ==================================================
-boolean IBNbyLCD() { return b_IBN; }
+boolean IBNbyDisplayPanel() { return b_IBN; }
+uint8_t DisplayPanelMode() { return ui8_LCDPanelMode; }
 
 void CheckAndInitLCDPanel()
 {
@@ -56,7 +77,7 @@ void CheckAndInitLCDPanel()
     // LCD was present is now absent:
     b_IBN = false;
     
-  if(b_LCDPanelDetected && !ui8_LCDPresent)
+  else if (b_LCDPanelDetected && !ui8_LCDPresent)
   {
     // LCD (newly) found:
     // set up the LCD's number of columns and rows: 
@@ -75,7 +96,7 @@ void CheckAndInitLCDPanel()
 		ui16_EditValue = 0;
     b_Edit = b_IBN = false;
 
-  } // if(b_LCDPanelDetected && !ui8_LCDPresent)
+  } // else if (b_LCDPanelDetected && !ui8_LCDPresent)
   ui8_LCDPresent = (b_LCDPanelDetected ? 1 : 0);
 }
 
@@ -101,6 +122,14 @@ void SetLCDPanelModeCV()
   lcd.setCursor(0, 0);  // set the cursor to column x, line y
   lcd.print(F("CV?"));
   ui8_LCDPanelMode = 200;
+}
+
+void SetLCDPanelModeTestColor()
+{
+  lcd.clear();
+  lcd.setCursor(0, 0);  // set the cursor to column x, line y
+  lcd.print(F("Farbentest?"));
+  ui8_LCDPanelMode = 205;
 }
 
 void SetLCDPanelModeScan()
@@ -201,43 +230,93 @@ void OutTextTitle()
 #endif
 }
 
-void OutTextClockStatus()
+void OutTextClockStatus(boolean bForce)
 {
+	uint16_t ui16_curriCount(0);
+	uint8_t ui8_currRate(0);
+	uint8_t ui8_currSync(0);
+  uint8_t ui8_currFCHour(0);
+  uint8_t ui8_currFCMinute(0);
+  GetFastClock(&ui8_currFCHour, &ui8_currFCMinute);
+	const boolean b_currGetClockState(GetClockState(&ui16_curriCount, &ui8_currRate, &ui8_currSync));
+
+  boolean bUpdate(bForce);
+  if (ui16_curriCount != ui16_previCount)
+    bUpdate = true;
+  if (ui8_currRate != ui8_prevRate)
+    bUpdate = true;
+  if (ui8_currSync != ui8_prevSync)
+    bUpdate = true;
+  if (ui8_currFCHour != ui8_prevFCHour)
+    bUpdate = true;
+  if (ui8_currFCMinute != ui8_prevFCMinute)
+    bUpdate = true;
+  if (b_prevGetClockState != b_currGetClockState)
+    bUpdate = true;
+  if(!bUpdate)
+    return;
+
+  ui16_previCount = ui16_curriCount;
+  ui8_prevRate = ui8_currRate;
+  ui8_prevSync = ui8_currSync;
+  ui8_prevFCHour = ui8_currFCHour;
+  ui8_prevFCMinute = ui8_currFCMinute;
+  b_prevGetClockState = b_currGetClockState;
+
   lcd.setCursor(0, 1);  // set the cursor to column x, line y
 
-	uint16_t ui16_iCount(0);
-	uint8_t ui8_Rate(0);
-	uint8_t ui8_Sync(0);
-	if(!GetClockState(&ui16_iCount, &ui8_Rate, &ui8_Sync))
+  if (!b_currGetClockState)
 		lcd.print(F("---"));
 	else
 	{
-		decout(lcd, ui16_iCount, 4);
+		decout(lcd, ui16_curriCount, 4);
 		lcd.print(F("-"));
     lcd.print(F("1:"));
-    decout(lcd, ui8_Rate, 2); // Rate: 0 = Freeze clock, 1 = normal, 10 = 10:1 etc. max is 0x7F
+    decout(lcd, ui8_currRate, 2); // Rate: 0 = Freeze clock, 1 = normal, 10 = 10:1 etc. max is 0x7F
 		lcd.print('-');
-		lcd.print(ui8_Sync? '1' : '0');
+		lcd.print(ui8_currSync? '1' : '0');
 		lcd.print('-');
-		uint8_t ui8_FCHour(0);
-		uint8_t ui8_FCMinute(0);
-		GetFastClock(&ui8_FCHour, &ui8_FCMinute);
-		lcd.print((ui8_FCMinute % 2) ? "O" : "E");
-	}
+		lcd.print((ui8_currFCMinute % 2) ? "O" : "E");
+	} // else if (!bGetClockState)
 }
 
-void OutTextDisplayStatus()
+void OutTextDisplayStatus(boolean bForce)
 {
-  lcd.setCursor(0, 1);  // set the cursor to column x, line y
+  uint8_t ui8_currFCHour(0);
+  uint8_t ui8_currFCMinute(0);
+  const boolean b_currIsFastClockStarted(GetFastClock(&ui8_currFCHour, &ui8_currFCMinute));  // set if at least one telegramm received
+  const boolean b_currIsRunning(isFastClockRunning()); // set if clockrate is not zero
+  const uint8_t ui8_currRate(GetClockRate());
+  const boolean b_currLnOk(IsLnOk());
 
-  uint8_t ui8_Hour(0);
-  uint8_t ui8_Minute(0);
-  const boolean bIsFastClockStarted(GetFastClock(&ui8_Hour, &ui8_Minute));  // set if at least one telegramm received
-  const boolean bIsRunning(isFastClockRunning()); // set if clockrate is not zero
-  const uint8_t ui8Rate(GetClockRate());
-  const boolean bRed(!bIsRunning);
-  const boolean bGreen(bIsRunning && (ui8Rate > 1));
-  const boolean bBlue(bIsRunning && (ui8Rate == 1));
+  boolean bUpdate(bForce);
+  if (ui8_currRate != ui8_prevRate)
+    bUpdate = true;
+  if (ui8_currFCHour != ui8_prevFCHour)
+    bUpdate = true;
+  if (ui8_currFCMinute != ui8_prevFCMinute)
+    bUpdate = true;
+  if (b_prevIsFastClockStarted != b_currIsFastClockStarted)
+    bUpdate = true;
+  if (b_prevIsRunning != b_currIsRunning)
+    bUpdate = true;
+  if (b_prevLnOk != b_currLnOk)
+    bUpdate = true;
+  if(!bUpdate)
+    return;
+
+  ui8_prevRate = ui8_currRate;
+  ui8_prevFCHour = ui8_currFCHour;
+  ui8_prevFCMinute = ui8_currFCMinute;
+  b_prevIsFastClockStarted = b_currIsFastClockStarted;
+  b_prevIsRunning = b_currIsRunning;
+  b_prevLnOk = b_currLnOk;
+
+  const boolean bRed(!b_currIsRunning);
+  const boolean bGreen(b_currIsRunning && (ui8_currRate > 1));
+  const boolean bBlue(b_currIsRunning && (ui8_currRate == 1));
+
+  lcd.setCursor(0, 1);  // set the cursor to column x, line y
 
   if(bRed)
 		lcd.print(F("R"));
@@ -253,26 +332,60 @@ void OutTextDisplayStatus()
 		lcd.print(F("-"));
 
   lcd.setCursor(4, 1);  // set the cursor to column x, line y
-  if(bIsRunning)
+  if(b_currIsRunning)
 		lcd.print(F("Run"));
   else
 		lcd.print(F("Stp"));
 
   lcd.setCursor(8, 1);  // set the cursor to column x, line y
-  if(bIsFastClockStarted)
+  if(b_currIsFastClockStarted)
 		lcd.print(F("T"));
   else
 		lcd.print(F("-"));
 
   lcd.setCursor(10, 1);  // set the cursor to column x, line y
 	lcd.print(F("1:"));
-  decout(lcd, ui8Rate, 2);  // Rate: 0 = Freeze clock, 1 = normal, 10 = 10:1 etc. max is 0x7F
+  decout(lcd, ui8_currRate, 2);  // Rate: 0 = Freeze clock, 1 = normal, 10 = 10:1 etc. max is 0x7F
 
   lcd.setCursor(15, 1);  // set the cursor to column x, line y
-  if(IsLnOk())
+  if(b_currLnOk)
 		lcd.print(F("+"));
   else
 		lcd.print(F("-"));
+}
+
+void OutTextFastClockTime(boolean bForce)
+{
+  uint8_t ui8_currFCHour(0);
+  uint8_t ui8_currFCMinute(0);
+  const boolean bGetFastClock(GetFastClock(&ui8_currFCHour, &ui8_currFCMinute));
+
+  boolean bUpdate(bForce);
+  if (ui8_currFCHour != ui8_prevFCHour)
+    bUpdate = true;
+  if (ui8_currFCMinute != ui8_prevFCMinute)
+    bUpdate = true;
+  if(!bUpdate)
+    return;
+
+  ui8_prevFCHour = ui8_currFCHour;
+  ui8_prevFCMinute = ui8_currFCMinute;
+
+  lcd.setCursor(0, 1);  // set the cursor to column x, line y
+  if (bGetFastClock)
+  {
+    if (ui8_currFCHour < 23)
+      decout(lcd, ui8_currFCHour, 2);
+    else
+      lcd.print(F("??"));
+    lcd.print(':');
+    if(ui8_currFCMinute < 60) 
+      decout(lcd, ui8_currFCMinute, 2);
+    else 
+      lcd.print(F("??"));
+  } // if (bGetFastClock)
+  else
+    lcd.print(F("--:--"));
 }
 
 void DisplayCV(uint16_t ui16_Value)
@@ -311,6 +424,35 @@ void DisplayCV(uint16_t ui16_Value)
   }
 }
 
+void DisplayColorText()
+{
+  lcd.setCursor(0, 1);  // set the cursor to column x, line y
+  if (ui8_LCDPanelMode == MIN_COLOR)
+  { // rot
+    lcd.print(F("rot   "));
+  } // if (ui8_LCDPanelMode == MIN_COLOR)
+  else if (ui8_LCDPanelMode == (MIN_COLOR + 1))
+  { // grün
+    lcd.print(F("gr"));
+    lcd.print(char(0xF5));  // ü
+    lcd.print(F("n  "));
+  } // else if (ui8_LCDPanelMode == (MIN_COLOR + 1))
+  else if (ui8_LCDPanelMode == (MIN_COLOR + 2))
+  { // blau
+    lcd.print(F("blau  "));
+  } // else if (ui8_LCDPanelMode == (MIN_COLOR + 2))
+  else if (ui8_LCDPanelMode == (MIN_COLOR + 3))
+  { // blau
+    lcd.print(F("wei"));
+    lcd.print(char(0xE2));  // ß
+    lcd.print(F("  "));
+  } // else if (ui8_LCDPanelMode == (MIN_COLOR + 3))
+  else if (ui8_LCDPanelMode == (MIN_COLOR + 4))
+  { // gelb
+    lcd.print(F("gelb  "));
+  } // else if (ui8_LCDPanelMode == (MIN_COLOR + 4))
+}
+
 uint8_t GetCountOfDigits(uint8_t ui8CvNr)
 {
   uint16_t ui16MaxCvValue(GetCVMaxValue(ui8CvNr));
@@ -331,12 +473,12 @@ uint16_t GetFactor(uint8_t ui8CvNr)
   uint8_t ui8_Position(GetCountOfDigits(ui8CvNr));
   switch (ui8_Position - ui8_CursorX)
   {
-  case 0: ui16_faktor = 1; break;
-  case 1: ui16_faktor = 10; break;
-  case 2: ui16_faktor = 100; break;
-  case 3: ui16_faktor = 1000; break;
-  case 4: ui16_faktor = 10000; break;
-  }
+    case 0: ui16_faktor = 1; break;
+    case 1: ui16_faktor = 10; break;
+    case 2: ui16_faktor = 100; break;
+    case 3: ui16_faktor = 1000; break;
+    case 4: ui16_faktor = 10000; break;
+  } // switch (ui8_Position - ui8_CursorX)
   return ui16_faktor;
 }
 
@@ -344,20 +486,23 @@ void HandleLCDPanel()
 {
   CheckAndInitLCDPanel();
 
-  if(ui8_LCDPresent != 1)
+  if (!ui8_LCDPresent)
+  {
+    b_IBN = false;
     return;
+  } // if (!ui8_LCDPresent)
 
-  uint8_t ui8_bs = 1;
+  uint8_t ui8_bs(1);
   if(lcd.readButtonA5() == BUTTON_A5)
     ui8_bs = 0;
   lcd.setBacklight(ui8_bs);
 
-  uint8_t ui8_buttons = lcd.readButtons();  // reads only 5 buttons (A0...A4)
+  uint8_t ui8_buttons(lcd.readButtons());  // reads only 5 buttons (A0...A4)
   if(!ui8_buttons && (ui8_ButtonMirror != ui8_buttons))
   {
     ui8_ButtonMirror = 0;
     return;
-  }
+  } // if(!ui8_buttons && (ui8_ButtonMirror != ui8_buttons))
 
   if(ui8_buttons && (ui8_ButtonMirror != ui8_buttons))
   {
@@ -390,7 +535,7 @@ void HandleLCDPanel()
 				lcd.clear();
 				lcd.setCursor(0, 0);  // set the cursor to column x, line y
 				lcd.print(F("Status"));
-        OutTextClockStatus();
+        OutTextClockStatus(true);
         ui8_LCDPanelMode = 10;
         return;
       }
@@ -404,7 +549,7 @@ void HandleLCDPanel()
         SetLCDPanelModeStatus();  // mode = 1
       }
       else if (ui8_buttons & BUTTON_RIGHT)
-      { // switch to ask CV / IÂ²C-Scan
+      { // switch to ask CV / TestModus / I²C-Scan
         SetLCDPanelModeCV();
       }
       else if (ui8_buttons & BUTTON_DOWN)
@@ -413,6 +558,7 @@ void HandleLCDPanel()
         lcd.clear();
         lcd.setCursor(0, 0);  // set the cursor to column x, line y
         lcd.print(F("FastClock"));
+        OutTextFastClockTime(true);
       }
       return;
     } // if(ui8_LCDPanelMode == 2)
@@ -424,7 +570,9 @@ void HandleLCDPanel()
       { // switch to IBN
         SetLCDPanelModeIBN(); // mode = 2
         return;
-      }
+      } // if (ui8_buttons & BUTTON_UP)
+      if (ui8_buttons & BUTTON_SELECT)
+        PollFastClock();
     } // if(ui8_LCDPanelMode == 7)
     //------------------------------------
     if(ui8_LCDPanelMode == 10)
@@ -440,7 +588,7 @@ void HandleLCDPanel()
 				lcd.clear();
 				lcd.setCursor(0, 0);  // set the cursor to column x, line y
 				lcd.print(F("Display-Status"));
-        OutTextDisplayStatus();
+        OutTextDisplayStatus(true);
         ui8_LCDPanelMode = 11;
         return;
       }
@@ -454,7 +602,7 @@ void HandleLCDPanel()
 				lcd.clear();
 				lcd.setCursor(0, 0);  // set the cursor to column x, line y
 				lcd.print(F("Status"));
-        OutTextClockStatus();
+        OutTextClockStatus(true);
         ui8_LCDPanelMode = 10;
         return;
       }
@@ -582,12 +730,41 @@ void HandleLCDPanel()
       }
     } // if((ui8_LCDPanelMode >= 20) && (ui8_LCDPanelMode <= MAX_MODE))
     //------------------------------------
+    if ((ui8_LCDPanelMode >= MIN_COLOR) && (ui8_LCDPanelMode <= MAX_COLOR))
+    {
+      // actual ui8_LCDPanelMode = test colors
+      if (ui8_buttons & BUTTON_LEFT)
+      { // switch to display current CV's
+        SetLCDPanelModeTestColor();
+        b_IBN = false;
+        return;
+      } // if (ui8_buttons & BUTTON_LEFT)
+      if (ui8_buttons & BUTTON_UP)
+      {
+        // switch to next color
+        ++ui8_LCDPanelMode;
+        if (ui8_LCDPanelMode >= MAX_COLOR)
+          ui8_LCDPanelMode = MAX_COLOR;
+        DisplayColorText();
+        return;
+      } // if (ui8_buttons & BUTTON_UP)
+      if (ui8_buttons & BUTTON_DOWN)
+      {
+        // switch to previous color
+        --ui8_LCDPanelMode;
+        if (ui8_LCDPanelMode < MIN_COLOR)
+          ui8_LCDPanelMode = MIN_COLOR;
+        DisplayColorText();
+        return;
+      } // if (ui8_buttons & BUTTON_DOWN)
+    } // if ((ui8_LCDPanelMode >= MIN_COLOR) && (ui8_LCDPanelMode <= MAX_COLOR))
+    //------------------------------------
     if(ui8_LCDPanelMode == 200)
     {
       // actual ui8_LCDPanelMode = "CV?"
       if (ui8_buttons & BUTTON_DOWN)
-      { // switch to I²C-Scan
-        SetLCDPanelModeScan();
+      { // switch to "Farbentest?"
+        SetLCDPanelModeTestColor();
       }
       else if (ui8_buttons & BUTTON_LEFT)
       { // switch to "IBN?"
@@ -602,12 +779,39 @@ void HandleLCDPanel()
       return;
     } // if(ui8_LCDPanelMode == 200)
     //------------------------------------
+    if(ui8_LCDPanelMode == 205)
+    {
+      // actual ui8_LCDPanelMode = "Farbentest?"
+      if (ui8_buttons & BUTTON_DOWN)
+      { // switch to I²C-Scan
+        SetLCDPanelModeScan();
+      } // if (ui8_buttons & BUTTON_DOWN)
+      else if (ui8_buttons & BUTTON_LEFT)
+      { // switch to "IBN?"
+        SetLCDPanelModeIBN();
+      } // else if (ui8_buttons & BUTTON_LEFT)
+      else if (ui8_buttons & BUTTON_UP)
+      { // switch to "CV?"
+        SetLCDPanelModeCV();
+      } // else if (ui8_buttons & BUTTON_UP)
+      else if (ui8_buttons & BUTTON_RIGHT)
+      { // switch to display current colors
+        ui8_LCDPanelMode = MIN_COLOR;
+        lcd.clear();
+        lcd.setCursor(0, 0);  // set the cursor to column x, line y
+        lcd.print(F("Farbentest"));
+        DisplayColorText();
+        b_IBN = true;
+      } // else if (ui8_buttons & BUTTON_RIGHT)
+      return;
+    } // if(ui8_LCDPanelMode == 205)
+    //------------------------------------
     if(ui8_LCDPanelMode == 210)
     {
       // actual ui8_LCDPanelMode = "I²C-Scan?"
       if (ui8_buttons & BUTTON_UP)
-      { // switch to "CV?"
-        SetLCDPanelModeCV();
+      { // switch to "Farbentest?"
+        SetLCDPanelModeTestColor();
       }
       else if (ui8_buttons & BUTTON_LEFT)
       { // switch to "Inbetriebnahme?"
@@ -669,30 +873,12 @@ void HandleLCDPanel()
   } // if(ui8_buttons && (ui8_ButtonMirror != ui8_buttons))
   //========================================================================
   if(ui8_LCDPanelMode == 7)
-  { // display FastClock time in bottom row:
-    lcd.setCursor(0, 1);  // set the cursor to column x, line y
-    uint8_t ui8_Hour;
-    uint8_t ui8_Minute;
-    if(GetFastClock(&ui8_Hour, &ui8_Minute))
-    {
-      if (ui8_Hour < 23)
-        decout(lcd, ui8_Hour, 2);
-      else
-        lcd.print("??");
-      lcd.print(':');
-      if(ui8_Minute < 60) 
-        decout(lcd, ui8_Minute, 2);
-      else 
-        lcd.print("??");
-    }
-    else
-      lcd.print(F("--:--"));
-  } // if(ui8_LCDPanelMode == 7) 
+    OutTextFastClockTime(false);
   //========================================================================
   if(ui8_LCDPanelMode == 10)
-		OutTextClockStatus();
+		OutTextClockStatus(false);
   //========================================================================
   if(ui8_LCDPanelMode == 11)
-		OutTextDisplayStatus();
+		OutTextDisplayStatus(false);
   //========================================================================
 }

@@ -143,6 +143,9 @@ void HandleLocoNetMessages()
   // Check for any received LocoNet packets
   LnPacket = LocoNet.receive();
 #endif
+#if defined DEBUG || defined TELEGRAM_FROM_SERIAL
+  Printout('R');
+#endif
   if(LnPacket)
   {
     if (ENABLE_LN_FC_MODUL)
@@ -167,7 +170,7 @@ void HandleLocoNetMessages()
   } // if(LnPacket)
 
 	if (ENABLE_LN_FC_MODUL/* we are also Slave */ && isTimeForProcessActions(&ul_LastFastClockTick, 67))
-    FastClock.process66msActions(); // will call 'notifyFastClockFracMins' with sync=0 if neccessary (and so clock will continue running internally)
+    FastClock.process66msActions(); // will call 'notifyFastClock' with sync=0 if neccessary 
 }  
 
 void HandleFracMins(uint16_t FracMins)
@@ -188,7 +191,7 @@ LN_STATUS PollFastClock()
   // Poll the current time from the command station
   // ...we don't use "FastClock.poll();" because it has no return (so we don't see any error and can't react to the result)...
 #if defined DEBUG
-  Serial.println("...poll FastClock...");
+  Serial.println("...poll FastClock [BB 7B 00 3F]...");
 #endif
   return LocoNet.send(OPC_RQ_SL_DATA, FC_SLOT, 0);
 }

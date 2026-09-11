@@ -17,12 +17,12 @@ discrete In/Outs used for functionalities:
   -  9 Out used   RED
   - 10 Out used   WS2812B Dataline
   - 11 Out used   GREEN
-  - 12 In  used   LN-Watcher
-  - 13 not used
-  - 14 not used
-  - 15 not used
-  - 16 not used
-  - 17 not used
+  - 12 OUT used   diskrete LED rt für Diagnose: blinkt bei LN-Ausfall
+  - 13 OUT used   diskrete LED gb für Diagnose: bisher kein Telegramm erhalten
+  - 14 IN  used   LN-Watcher
+  - 15 OUT used   diskrete LED ws für Diagnose: Takt = 1:1
+  - 16 OUT used   diskrete LED gn für Diagnose: Takt > 1:1
+  - 17 OUT used   diskrete LED rt für Diagnose: Takt angehalten
   - 18     (used by I²C: SDA)
   - 19     (used by I²C: SCL)
 
@@ -79,7 +79,7 @@ constexpr uint16_t NUMPIXELS(8);
 #define UNREFERENCED_PARAMETER(P) { (P) = (P); }
 
 #define MANUFACTURER_ID  13   // NMRA: DIY
-#define DEVELOPER_ID  58      // NMRA: my ID, should be > 27 (1 = FREMO, see https://groups.io/g/LocoNet-Hackers/files/LocoNet%20Hackers%20DeveloperId%20List_v27.html)
+#define DEVELOPER_ID  58      // NMRA: my ID, should be > 28 (1 = FREMO, see https://groups.io/g/LocoNet-Hackers/files/LocoNet%20Hackers%20DeveloperId%20List_v27.html)
 
 //=== declaration of var's =======================================
 
@@ -87,6 +87,9 @@ constexpr uint16_t NUMPIXELS(8);
 
 #include <HeartBeat.h>
 HeartBeat oHeartbeat;
+
+static const uint8_t MIN_COLOR (50); // rot - grün - blau - weiß - gelb
+static const uint8_t MAX_COLOR (54); // rot - grün - blau - weiß - gelb
 
 //========================================================
 void setup()
@@ -135,6 +138,8 @@ void loop()
   #endif
 #endif
 }
+
+void StopClock() { ; }  // copy from 'Uhrenzentrale - ClockCommand.ino', for compatibility; do nothing here...
 
 /*=== will be called from LocoNetFastClockClass
 			if telegram is OPC_SL_RD_DATA [0xE7] or OPC_WR_SL_DATA [0xEF] and clk-state != IDLE ==================

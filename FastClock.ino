@@ -27,13 +27,13 @@ boolean b_SlaveClockLEDDisplayPresent = false;
 boolean b_FCButtonMirror = false;
 boolean b_FastClockReceived = false;
 boolean b_FastClockIsRunning = false;
-uint8_t ui8_FCHour;
-uint8_t ui8_FCMinute;
-uint8_t ui8_FCOut;
-uint8_t ui8_FCDay;
-uint8_t ui8_FCRate;
-uint8_t ui8_FCSync;
-uint16_t ui16_FCCount;
+uint8_t ui8_FCHour = 0;
+uint8_t ui8_FCMinute = 0;
+uint8_t ui8_FCOut = 0;
+uint8_t ui8_FCDay = 0;
+uint8_t ui8_FCRate = 0;
+uint8_t ui8_FCSync = 0;
+uint16_t ui16_FCCount = 0;
 
 boolean GetFastClockState() { return b_FastClockReceived; }
 
@@ -56,6 +56,10 @@ void InitFastClock()
 	ul_LastSetFastClock = 0;
   b_FastClockIsRunning = false;
 
+#if defined DEBUG
+    Serial.println(F("FastClock..."));
+#endif
+
   if(!ENABLE_LN || !ENABLE_LN_FC_MODUL)
     return;
   
@@ -66,7 +70,6 @@ void InitFastClock()
   {
     b_SlaveClockModulePresent = true;
 #if defined DEBUG
-    Serial.println(F("FastClock..."));
     Serial.println(F("...Slave Clock found"));
 #endif
   }
@@ -94,13 +97,13 @@ void InitFastClock()
 
 void HandleFastClock()
 {
-	if (b_FastClockIsRunning && ENABLE_LN_FC_SLAVE)
-	{
+	if (b_FastClockIsRunning && ENABLE_LN_FC_SLAVE && !ENABLE_LN_FC_INTERN)
+	{ // if ENABLE_LN_FC_INTERN is true, time will be calculated with the help of 'notifyFastClockFracMins'
 		// when FastClock is running: last SetFastClock (coming from EF/E7-telegram) not received since more then 60s 
-    unsigned long ulWaitingFoNextTelegram(60000);
+    unsigned long ulWaitingForNextTelegram(60000);
     if (ui8_FCRate)
-      ulWaitingFoNextTelegram /= ui8_FCRate;
-		if ((millis() - ul_LastSetFastClock) > ulWaitingFoNextTelegram)
+      ulWaitingForNextTelegram /= ui8_FCRate;
+		if ((millis() - ul_LastSetFastClock) > ulWaitingForNextTelegram)
 			PollFastClock();
 	}
 
@@ -197,14 +200,14 @@ void SetFastClock( uint8_t Rate, uint8_t Day, uint8_t Hour, uint8_t Minute, uint
   // if Rate is Zero assume, Fastclock isn't runnnung / has stopped
   b_FastClockIsRunning = (Rate != 0);
 
+	ul_LastSetFastClock = millis();
+
   // if Sync is Zero assume function-call not coming from FastClock-Master by telegram but is calculated time
-  if((Sync == 0) && (ENABLE_LN_FC_INTERN == 0)) // received automagically from 
-    return;                                     // 'LocoNetFastClockClass::process66msActions'
-                                                // after first FastClock-Telegramm 'E7' is received
+  if((Sync == 0) && !ENABLE_LN_FC_INTERN) // received automagically from 
+    return;                               // 'LocoNetFastClockClass::process66msActions'
+                                          // after first FastClock-Telegramm 'E7' is received
   if(!b_FastClockIsRunning)
     return;
-
-	ul_LastSetFastClock = millis();
 
 	if(ui8_FCMinute != Minute)
   {
@@ -229,6 +232,14 @@ void SetFastClock( uint8_t Rate, uint8_t Day, uint8_t Hour, uint8_t Minute, uint
   ui8_FCHour = Hour;
   ui8_FCMinute = Minute;
 	ui8_FCDay = Day;
+
+#if defined DEBUG
+ 	Serial.print("Rate: "); Serial.print(Rate, DEC);
+	Serial.print(" Day: "); Serial.print(Day, DEC);
+	Serial.print(" Hour: "); Serial.print(Hour, DEC);
+	Serial.print(" Min: "); Serial.print(Minute, DEC);
+	Serial.print(" Sync: "); Serial.println(Sync, DEC);
+#endif
 }
 
 boolean isTimeForProcessActions(unsigned long *timeMark, unsigned long timeInterval)
