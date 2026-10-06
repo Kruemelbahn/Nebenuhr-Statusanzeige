@@ -2,7 +2,7 @@
 //=== declaration of out's =======================================
 
 constexpr int16_t PIXEL_PIN(10);
-constexpr unsigned long PIXEL_DELAY(250);
+const unsigned long PIXEL_DELAY(GetCV(REFRESH_TIME));
 
 constexpr uint8_t TM1637CLK(4);
 constexpr uint8_t TM1637DIO(5);
@@ -20,6 +20,7 @@ constexpr uint8_t LN_WATCHER(A0);
 #define ENABLE_LED_STRIPES        (GetCV(ADD_FUNCTIONS_2) & 0x08)
 #define ENABLE_LN_WATCHER         (GetCV(ADD_FUNCTIONS_2) & 0x80)
 #define ENABLE_CLOCK_STOP_WITH_LN_WATCHER (0)
+
 
 //... Ports für Diagnose LEDs:....................
 constexpr uint8_t LN_FAILED(12);       // bei LN-Ausfall

@@ -1,7 +1,7 @@
 //=== CV-Definitions for Nebenuhr-Statusanzeige ===
 
 // give CV a unique name
-enum { ID_DEVICE = 0, ID_LED_COUNT, ID_LED_BRIGHT, ID_R_BRIGHT, ID_G_BRIGHT, ID_B_BRIGHT, VERSION_NUMBER, SOFTWARE_ID, ADD_FUNCTIONS_1, ADD_FUNCTIONS_2
+enum { ID_DEVICE = 0, ID_LED_COUNT, ID_LED_BRIGHT, ID_R_BRIGHT, ID_G_BRIGHT, ID_B_BRIGHT, VERSION_NUMBER, SOFTWARE_ID, ADD_FUNCTIONS_1, ADD_FUNCTIONS_2, REFRESH_TIME
 #if defined ETHERNET_BOARD
      , IP_BLOCK_3, IP_BLOCK_4
 #endif
@@ -10,16 +10,16 @@ enum { ID_DEVICE = 0, ID_LED_COUNT, ID_LED_BRIGHT, ID_R_BRIGHT, ID_G_BRIGHT, ID_
 //=== declaration of var's =======================================
 #define PRODUCT_ID SOFTWARE_ID
 static const uint8_t DEVICE_ID = 1;							// CV1: Device-ID
-static const uint8_t SW_VERSION = 5;						// CV7: Software-Version
+static const uint8_t SW_VERSION = 6;						// CV7: Software-Version
 static const uint8_t SLAVE_CLOCK_STATUS = 18;		// CV8: Software-ID
 
 #if defined ETHERNET_BOARD
-  static const uint8_t MAX_CV = 12;
+  static const uint8_t MAX_CV = 13;
 #else
-  static const uint8_t MAX_CV = 10;
+  static const uint8_t MAX_CV = 11;
 #endif
 
-uint16_t ui16a_CV[MAX_CV] = { UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX
+uint16_t ui16a_CV[MAX_CV] = { UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX
 #if defined ETHERNET_BOARD
                           , UINT16_MAX, UINT16_MAX
 #endif
@@ -48,7 +48,8 @@ const struct _CV_DEF cvDefinition[MAX_CV] =
   ,{ VERSION_NUMBER,  SW_VERSION,         0,						        SW_VERSION,         CV_TYPE::UI8,     false}  // normally r/o
   ,{ SOFTWARE_ID,     SLAVE_CLOCK_STATUS, SLAVE_CLOCK_STATUS,   SLAVE_CLOCK_STATUS, CV_TYPE::UI8,     true}   // always r/o
   ,{ ADD_FUNCTIONS_1, 0b00011000,         0,						        UINT8_MAX,          CV_TYPE::BINARY,  false}  // additional functions 1
-  ,{ ADD_FUNCTIONS_2, 0b00000000,         0,						        UINT8_MAX,          CV_TYPE::BINARY,  false}  // additional functions 2
+  ,{ ADD_FUNCTIONS_2, 0b10000101,         0,						        UINT8_MAX,          CV_TYPE::BINARY,  false}  // additional functions 2
+  ,{ REFRESH_TIME,    250,                0,						        1000,               CV_TYPE::UI16,    false}  // refresh time for WS2812B
 #if defined ETHERNET_BOARD
   ,{ IP_BLOCK_3,      2,                  0,						        UINT8_MAX,          CV_TYPE::UI8,     false}  // IP-Address part 3
   ,{ IP_BLOCK_4,      106,                0,						        UINT8_MAX,          CV_TYPE::UI8,     false}  // IP-Address part 4
@@ -70,7 +71,8 @@ const __FlashStringHelper *GetCVName(uint8_t ui8_Index)
                                                 F("Version"),
                                                 F("SW-ID"),
                                                 F("Cfg FC-Slv"),
-                                                F("Config l")
+                                                F("Config l"),
+                                                F("WS-Refresh")
 #if defined ETHERNET_BOARD
                                               , F("IP-Part 3")
                                               , F("IP-Part 4")

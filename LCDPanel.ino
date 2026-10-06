@@ -8,7 +8,7 @@ LCDPanel lcd = LCDPanel();
 uint8_t ui8_LCDPresent = 0;  // ui8_LCDPresent: 1 if I2C-LCD-Panel is found
 
 /* mode:
-  0   after init "LN-FastClock" is displayed
+  0   after init "Nebenuhr-Status" is displayed
   1   "Status?" is displayed
   2   "Inbetriebnahme?" is displayed
   7   "FastClock" is displayed
@@ -28,6 +28,7 @@ uint8_t ui8_LCDPresent = 0;  // ui8_LCDPresent: 1 if I2C-LCD-Panel is found
  29   (edit) mode for CV10
  30   (edit) mode for CV11
  31   (edit) mode for CV12
+ 32   (edit) mode for CV13
  
  50   Test: Farbe rot
  51   Test: Farbe grün
@@ -399,6 +400,13 @@ void DisplayCV(uint16_t ui16_Value)
   if (ui8CvNr < 10)
     lcd.print(' ');
   lcd.print(ui8CvNr);
+  if (ui8CvNr == (SOFTWARE_ID + 1))  // CV8 = Software-ID
+  {
+    lcd.setCursor(6, 1);
+    lcd.print(MANUFACTURER_ID);
+    lcd.print(char(0xA5));
+    lcd.print(DEVELOPER_ID);
+  } // if (ui8CvNr == (SOFTWARE_ID + 1))  // CV8 = Software-ID
   --ui8CvNr;
 
   // show shortname:
