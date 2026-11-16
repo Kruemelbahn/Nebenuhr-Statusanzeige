@@ -10,7 +10,7 @@ enum { ID_DEVICE = 0, ID_LED_COUNT, ID_LED_BRIGHT, ID_R_BRIGHT, ID_G_BRIGHT, ID_
 //=== declaration of var's =======================================
 #define PRODUCT_ID SOFTWARE_ID
 static const uint8_t DEVICE_ID = 1;							// CV1: Device-ID
-static const uint8_t SW_VERSION = 6;						// CV7: Software-Version
+static const uint8_t SW_VERSION = 7;						// CV7: Software-Version
 static const uint8_t SLAVE_CLOCK_STATUS = 18;		// CV8: Software-ID
 
 #if defined ETHERNET_BOARD
@@ -48,7 +48,7 @@ const struct _CV_DEF cvDefinition[MAX_CV] =
   ,{ VERSION_NUMBER,  SW_VERSION,         0,						        SW_VERSION,         CV_TYPE::UI8,     false}  // normally r/o
   ,{ SOFTWARE_ID,     SLAVE_CLOCK_STATUS, SLAVE_CLOCK_STATUS,   SLAVE_CLOCK_STATUS, CV_TYPE::UI8,     true}   // always r/o
   ,{ ADD_FUNCTIONS_1, 0b00011000,         0,						        UINT8_MAX,          CV_TYPE::BINARY,  false}  // additional functions 1
-  ,{ ADD_FUNCTIONS_2, 0b10000101,         0,						        UINT8_MAX,          CV_TYPE::BINARY,  false}  // additional functions 2
+  ,{ ADD_FUNCTIONS_2, 0b10010101,         0,						        UINT8_MAX,          CV_TYPE::BINARY,  false}  // additional functions 2
   ,{ REFRESH_TIME,    250,                0,						        1000,               CV_TYPE::UI16,    false}  // refresh time for WS2812B
 #if defined ETHERNET_BOARD
   ,{ IP_BLOCK_3,      2,                  0,						        UINT8_MAX,          CV_TYPE::UI8,     false}  // IP-Address part 3

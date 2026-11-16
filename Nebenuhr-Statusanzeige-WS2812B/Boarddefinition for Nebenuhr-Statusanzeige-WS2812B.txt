@@ -1,0 +1,31 @@
+# add this section to your 'Boards.txt' file
+##############################################################
+
+atmega8.name=ATmega8 (ATmege8L8)
+
+atmega8.upload_port.0.board=atmega8
+
+atmega8.upload.tool=avrdude
+atmega8.upload.tool.default=avrdude
+atmega8.upload.tool.network=arduino_ota
+atmega8.upload.protocol=arduino
+atmega8.upload.maximum_size=7168
+atmega8.upload.maximum_data_size=1024
+atmega8.upload.speed=19200
+
+atmega8.bootloader.tool=avrdude
+atmega8.bootloader.tool.default=avrdude
+atmega8.bootloader.unlock_bits=0x3F
+atmega8.bootloader.lock_bits=0x0F
+atmega8.bootloader.low_fuses=0xdf
+atmega8.bootloader.high_fuses=0xca
+atmega8.bootloader.extended_fuses=
+atmega8.bootloader.file=atmega8/ATmegaBOOT-prod-firmware-2009-11-07.hex
+
+atmega8.build.mcu=atmega8
+atmega8.build.f_cpu=8000000L
+atmega8.build.board=AVR_NG
+atmega8.build.core=arduino
+atmega8.build.variant=standard
+
+##############################################################

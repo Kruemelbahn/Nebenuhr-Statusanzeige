@@ -10,6 +10,12 @@ Adafruit_NeoPixel pixels(NUMPIXELS, PIXEL_PIN, PIXEL_FORMAT);
 boolean bPixels(false);
 unsigned long ulWaitingForNextPixelsToSend(0);
 
+boolean bIsLnOk_mirror(false);
+boolean bRed_mirror(false);
+boolean bGreen_mirror(false);
+boolean bBlueOrWhite_mirror(false);
+boolean bYellow_mirror(false);
+
 //................................................
 #include <TM1637Display.h>
 TM1637Display display(TM1637CLK, TM1637DIO);
@@ -159,8 +165,39 @@ void HandleClockHandling()
   // WS2812B can show more than one status, e.g. FastClock not started
   if (bPixels)
   {
+    // update pixels necessary?
+    boolean bUpdatePixels(false);
+    if (ENABLE_REFRESH_ONCHANGE)
+    {
+      if (bRed_mirror != bRed)
+      {
+        bUpdatePixels = true;
+        bRed_mirror = bRed;
+      } // if (bRed_mirror != bRed)
+      if (bGreen_mirror != bGreen)
+      {
+        bUpdatePixels = true;
+        bGreen_mirror = bGreen;
+      } // if (bGreen_mirror != bGreen)
+      if (bBlueOrWhite_mirror != bBlueOrWhite)
+      {
+        bUpdatePixels = true;
+        bBlueOrWhite_mirror = bBlueOrWhite;
+      } // if (bBlueOrWhite_mirror != bBlueOrWhite)
+      if (bYellow_mirror != bYellow)
+      {
+        bUpdatePixels = true;
+        bYellow_mirror = bYellow;
+      } // if (bYellow_mirror != bYellow)
+    } // if (ENABLE_REFRESH_ONCHANGE)
     // nur einmal alle PIXEL_DELAYms aktualisieren:
-    if ((millis() - ulWaitingForNextPixelsToSend) >= PIXEL_DELAY)
+    if (PIXEL_DELAY && ((millis() - ulWaitingForNextPixelsToSend) >= PIXEL_DELAY))
+    {
+      bUpdatePixels = true;
+      ulWaitingForNextPixelsToSend = millis();
+    } // if (millis() - ulWaitingForNextPixelsToSend) >= PIXEL_DELAY)
+    // update pixels
+    if (bUpdatePixels)
     {
       if (!bIsLnOk)
         // DCC / LocoNet failed (off)
@@ -183,8 +220,7 @@ void HandleClockHandling()
       // during send: Interrups are disabled
       // duration for 8 LEDs: about 270µs
       pixels.show(); 
-      ulWaitingForNextPixelsToSend = millis();
-    } // if ((millis() - ulWaitingForNextPixelsToSend) >= PIXEL_DELAY)
+    } // if (bUpdatePixels)
   } // if (bPixels)
 
   //=== diagnostic LEDs

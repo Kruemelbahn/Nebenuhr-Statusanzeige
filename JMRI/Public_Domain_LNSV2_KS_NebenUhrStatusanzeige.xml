@@ -224,6 +224,20 @@
 		</tooltip>
 	  </variable>
 
+	  <variable CV="11" item="Advanced Group 1 Option 12" readOnly="no" comment="Refresh time in milliseconds for updating the WS2812B">
+        <decVal min="0" max="1000"/>
+        <label>Refresh time in milliseconds for updating the WS2812B</label>
+		<label xml:lang="de">Refreshzeit in Millisekunden für die Aktualisierung der WS2812B</label>
+		<tooltip>&lt;html&gt;
+         Refreshzeit in Millisekunden für die Aktualisierung der WS2812B: 0…1000, Standard = 250&lt;br/&gt;
+         Wird hier der Wert ‚0‘ eingetragen, erfolgt&lt;br/&gt;
+         -	ein Refresh der WS2812B nur bei einem Statuswechsel,&lt;br/&gt;
+            wenn CV10 Bit 4 gesetzt ist&lt;br/&gt;
+         -	kein Refresh der WS2812B, wenn CV10 Bit 4 nicht gesetzt ist&lt;br/&gt;
+				 &lt;/html&gt;
+		</tooltip>
+	  </variable>
+
     </variables>
   </decoder>
 
